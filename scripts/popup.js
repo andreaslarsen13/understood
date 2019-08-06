@@ -5,12 +5,17 @@ StorageManager.retrieveAllText(function(items) {
     var webpage = items[urlKey];
     var titleText = hasTitle(webpage[0]) ? webpage.shift().title : undefined;
 
-    var listNode = document.createElement("UL");
-    listNode.className += "project-item";
+    var listNode = document.createElement("DIV");
+    listNode.className += "col-12";
+
+    var colNode = document.createElement("DIV");
+    colNode.className += "card";
 
     var titleContainer = constructHeaderNode(urlKey, titleText);
 
-    listNode.appendChild(titleContainer);
+    colNode.appendChild(titleContainer);
+
+    listNode.appendChild(colNode);
 
     for(var saved of webpage) {
       (function() {
@@ -23,7 +28,7 @@ StorageManager.retrieveAllText(function(items) {
         listItem.addEventListener("mouseover", function() { trashIcon.className = 'trash-icon-visible'; });
         listItem.addEventListener("mouseout", function() { trashIcon.className = 'trash-icon-hidden'; });
 
-        listNode.appendChild(listItem);
+        colNode.appendChild(listItem);
       }());
     }
 
@@ -62,20 +67,41 @@ function hasTitle(obj) {
 
 function constructHeaderNode(url, titleText) {
   var container = document.createElement('div');
-  var hostnameNode = constructNodeWithText("p", extractUrlHostname(url));
-  hostnameNode.className += "no-margin";
+  
+  
+
+  var hostnameNode = constructNodeWithText("DIV", extractUrlHostname(url));
+  hostnameNode.className += "collapse pt-3 show";
+  hostnameNode.setAttribute("id", "cardCollpase1");
+
+
 
   if( titleText !== undefined) {
     var titleNode = constructNodeWithText("h5", titleText);
-    titleNode.className += "no-margin";
+    titleNode.className += "card-title mb-0";
+    var cardWidget = document.createElement("DIV");
+    cardWidget.className += "card-widgets";
+    var collapse = document.createElement("A");
+    collapse.className += "collapseElement";
+    var collapseIcon = document.createElement("I");
+    collapseIcon.className += "mdi mdi-minus";
 
+    collapse.setAttribute("data-toggle", "collapse");
+    collapse.setAttribute("href", "#cardCollpase1");
+    collapse.setAttribute("role", "button");
+    collapse.setAttribute("aria-expanded", "false");
+    collapse.setAttribute("aria-controls", "cardCollpase1");
+
+
+    collapse.appendChild(collapseIcon);
+    cardWidget.appendChild(collapse);
+    container.appendChild(cardWidget);
     container.appendChild(titleNode);
   }
-  
   container.appendChild(hostnameNode);
-  container.className += "project-item-header";
+  container.className += "card-body";
 
-  container.addEventListener("click", function() { window.open(url) });
+  // container.addEventListener("click", function() { window.open(url) });
 
   return container;
 }
